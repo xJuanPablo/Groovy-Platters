@@ -26,16 +26,22 @@ class Product(models.Model):
   # DateTimeField gets the current date and time
   collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
   promotions = models.ManyToManyField(Promotion)
+  slug = models.SlugField()
 
 
 
-class Customer (models.Model):
+class Customer(models.Model):
   first_name = models.CharField(max_length=100)
   last_name = models.CharField(max_length=100)
   email = models.EmailField(unique=True)
   # Used EmailField to store valid email addresses
   phone = models.CharField(max_length=100)
   birth_date = models.DateField(null=True)
+  class Meta:
+    db_table = 'store_customers'
+    indexes = [
+      models.Index(fields=['last_name', 'first_name'])
+    ]
 
 
 
@@ -70,8 +76,8 @@ class OrderItem(models.Model):
 class Address(models.Model):
   street = models.CharField(max_length=270)
   city = models.CharField(max_length=270)
-  customer = models.ForeignKey(
-    Customer, on_delete=models.CASCADE)
+  customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+  zip = models.CharField(max_length=5, default="00000")
 
 
 
